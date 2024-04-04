@@ -17,6 +17,7 @@ on:
     branches: [ master ]
   schedule:
     - cron: '35 12 * * 5'
+  workflow_dispatch:
 
 jobs:
   rust-clippy-analyze:
