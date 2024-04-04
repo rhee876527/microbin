@@ -93,7 +93,7 @@ jobs:
       with:
         override: true
         target: ${{ matrix.target }}
-        toolchain: nightly
+        toolchain: stable
         profile: minimal # minimal component installation (ie, no documentation)
         
     - name: Install OpenSSL
