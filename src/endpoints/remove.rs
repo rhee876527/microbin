@@ -26,49 +26,7 @@ pub async fn remove(data: web::Data<AppState>, id: web::Path<String>) -> Result<
 
     for (i, pasta) in pastas.iter().enumerate() {
         if pasta.id == id {
-            // if it's encrypted or read-only, it needs password to be deleted
-            if pasta.encrypt_server || pasta.readonly {
-                return Ok(HttpResponse::Found()
-                    .append_header((
-                        "Location",
-                        format!("{}/auth_remove_private/{}", ARGS.public_path_as_str(), pasta.id_as_animals()),
-                    ))
-                    .finish());
-            }
-
-            // remove the file itself
-            if let Some(PastaFile { name, .. }) = &pasta.file {
-                if fs::remove_file(format!(
-                    "./{}/attachments/{}/{}",
-                    ARGS.data_dir,
-                    pasta.id_as_animals(),
-                    name
-                ))
-                .is_err()
-                {
-                    log::error!("Failed to delete file {}!", name)
-                }
-
-                // and remove the containing directory
-                if fs::remove_dir(format!(
-                    "./{}/attachments/{}/",
-                    ARGS.data_dir,
-                    pasta.id_as_animals()
-                ))
-                .is_err()
-                {
-                    log::error!("Failed to delete directory {}!", name)
-                }
-            }
-
-            // remove it from in-memory pasta list
-            pastas.remove(i);
-
-            if let Err(error) = delete(Some(&pastas), Some(id)) {
-                log::error!("Failed to delete pasta with id {} => {}", id, error);
-                return Err(ErrorInternalServerError("Database delete error"));
-            }
-
+            
             return Ok(HttpResponse::Found()
                 .append_header(("Location", format!("{}/list", ARGS.public_path_as_str())))
                 .finish());
@@ -110,65 +68,6 @@ pub async fn post_remove(
 
     for (i, pasta) in pastas.iter().enumerate() {
         if pasta.id == id {
-            if pastas[i].readonly || pastas[i].encrypt_server {
-                if password != *"" {
-                    let res = decrypt(pastas[i].content.to_owned().as_str(), &password);
-                    if res.is_ok() {
-                        // remove the file itself
-                        if let Some(PastaFile { name, .. }) = &pasta.file {
-                            if fs::remove_file(format!(
-                                "./{}/attachments/{}/{}",
-                                ARGS.data_dir,
-                                pasta.id_as_animals(),
-                                name
-                            ))
-                            .is_err()
-                            {
-                                log::error!("Failed to delete file {}!", name)
-                            }
-
-                            // and remove the containing directory
-                            if fs::remove_dir(format!(
-                                "./{}/attachments/{}/",
-                                ARGS.data_dir,
-                                pasta.id_as_animals()
-                            ))
-                            .is_err()
-                            {
-                                log::error!("Failed to delete directory {}!", name)
-                            }
-                        }
-
-                        // remove it from in-memory pasta list
-                        pastas.remove(i);
-                        if let Err(error) = delete(Some(&pastas), Some(id)) {
-                            log::error!("Failed to delete pasta with id {} => {}", id, error);
-                            return Err(ErrorInternalServerError("Database delete error"));
-                        }
-
-                        return Ok(HttpResponse::Found()
-                            .append_header((
-                                "Location",
-                                format!("{}/list", ARGS.public_path_as_str()),
-                            ))
-                            .finish());
-                    } else {
-                        return Ok(HttpResponse::Found()
-                            .append_header((
-                                "Location",
-                                format!("{}/auth_remove_private/{}/incorrect", ARGS.public_path_as_str(), pasta.id_as_animals()),
-                            ))
-                            .finish());
-                    }
-                } else {
-                    return Ok(HttpResponse::Found()
-                        .append_header((
-                            "Location",
-                            format!("{}/auth_remove_private/{}/incorrect", ARGS.public_path_as_str(), pasta.id_as_animals()),
-                        ))
-                        .finish());
-                }
-            }
 
             return Ok(HttpResponse::Found()
                 .append_header((

@@ -34,7 +34,7 @@ pub async fn get_edit(data: web::Data<AppState>, id: web::Path<String>) -> HttpR
 
     for pasta in pastas.iter() {
         if pasta.id == id {
-            if !pasta.editable {
+            if !pasta.editable || true {
                 return HttpResponse::Found()
                     .append_header(("Location", format!("{}/", ARGS.public_path_as_str())))
                     .finish();
@@ -86,7 +86,7 @@ pub async fn get_edit_with_status(
 
     for pasta in pastas.iter() {
         if pasta.id == intern_id {
-            if !pasta.editable {
+            if !pasta.editable || true {
                 return HttpResponse::Found()
                     .append_header(("Location", format!("{}/", ARGS.public_path_as_str())))
                     .finish();
@@ -255,7 +255,7 @@ pub async fn post_submit_edit_private(
         }
     }
 
-    if found && pastas[index].editable && !pastas[index].encrypt_client {
+    if found && pastas[index].editable && !pastas[index].encrypt_client && !true {
         if pastas[index].readonly {
             let res = decrypt(pastas[index].encrypted_key.as_ref().unwrap(), &password);
             if res.is_ok() {

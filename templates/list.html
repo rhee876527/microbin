@@ -38,7 +38,7 @@
             </thead>
             <tbody>
                 {% for pasta in pastas %}
-                {% if pasta.pasta_type == "text" && !pasta.private %}
+                {% if pasta.pasta_type == "text" %}
                 <tr>
                     <td>
                         <a
@@ -81,13 +81,11 @@
                     </td>
 
                     <td>
-                        {% if pasta.editable %}
-                        <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/edit/{{pasta.id_as_animals()}}">Edit</a>
+                        {% if pasta.private %}
+                        <span style="margin-right:1rem">
+                            Password protected
+                        </span>
                         {%- endif %}
-                    </td>
-                    <td>
-                        <a href="{{ args.public_path_as_str() }}/remove/{{pasta.id_as_animals()}}">Remove</a>
                     </td>
                 </tr>
                 {%- endif %}
@@ -121,7 +119,7 @@
                     </th>
                 </thead>
                 {% for pasta in pastas %}
-                {% if pasta.pasta_type == "url" && !pasta.private %}
+                {% if pasta.pasta_type == "url" %}
                 <tr>
                     <td>
                         <a
@@ -147,13 +145,11 @@
                             href="{{ args.public_path_as_str() }}/url/{{pasta.id_as_animals()}}">Redirect</a>
                     </td>
                     <td>
-                        {% if pasta.editable %}
-                        <a style="margin-right:1rem"
-                            href="{{ args.public_path_as_str() }}/edit/{{pasta.id_as_animals()}}">Edit</a>
+                        {% if pasta.private %}
+                        <span style="margin-right:1rem">
+                            Password protected
+                        </span>
                         {%- endif %}
-                    </td>
-                    <td>
-                        <a href="{{ args.public_path_as_str() }}/remove/{{pasta.id_as_animals()}}">Remove</a>
                     </td>
                 </tr>
                 {%- endif %}
