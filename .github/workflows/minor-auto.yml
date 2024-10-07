@@ -1,21 +1,33 @@
 name: "Auto-merge Dependabot minor updates"
 
 on:
-  workflow_dispatch:
   pull_request:
     types: [opened, synchronize]
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   automerge:
-    if: github.actor == 'dependabot[bot]' && contains(github.event.pull_request.title, 'minor')
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: "Auto-merge Dependabot minor updates"
+      # Auto-merge minor Dependabot updates for PR events
+      - name: "Check if PR is from Dependabot and is minor"
+        if: github.actor == 'dependabot[bot]' && contains(github.event.pull_request.title, 'minor')
+        run: echo "Dependabot minor update PR found, proceeding to merge."
+
+      - name: "Auto-merge Dependabot minor updates (PR events)"
+        if: github.actor == 'dependabot[bot]' && contains(github.event.pull_request.title, 'minor')
         run: |
           gh pr merge ${{ github.event.pull_request.number }} --squash --admin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
+      # Manual merge of minor Dependabot PRs when triggered by workflow_dispatch
+      - name: "Manual merge for minor PRs triggered by workflow_dispatch"
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          gh pr list --state open --json number,title | jq '.[] | select(.title | contains("minor")) | .number' | xargs -I{} gh pr merge {} --squash --admin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
