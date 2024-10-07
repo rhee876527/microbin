@@ -1,33 +1,27 @@
-name: "Auto-merge Dependabot minor updates"
-
-on:
+name: Dependabot auto-merge
+on: 
   pull_request:
-    types: [opened, synchronize]
-  workflow_dispatch: # Allows manual triggering
+  workflow_dispatch: 
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  automerge:
+  dependabot:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v3
-
-      # Auto-merge minor Dependabot updates for PR events
-      - name: "Check if PR is from Dependabot and is minor"
-        if: github.actor == 'dependabot[bot]' && contains(github.event.pull_request.title, 'minor')
-        run: echo "Dependabot minor update PR found, proceeding to merge."
-
-      - name: "Auto-merge Dependabot minor updates (PR events)"
-        if: github.actor == 'dependabot[bot]' && contains(github.event.pull_request.title, 'minor')
-        run: |
-          gh pr merge ${{ github.event.pull_request.number }} --squash --admin
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: Enable auto-merge for Dependabot PRs
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr merge --auto --merge "$PR_URL"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Manual merge of minor Dependabot PRs when triggered by workflow_dispatch
-      - name: "Manual merge for minor PRs triggered by workflow_dispatch"
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          gh pr list --state open --json number,title | jq '.[] | select(.title | contains("minor")) | .number' | xargs -I{} gh pr merge {} --squash --admin
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
