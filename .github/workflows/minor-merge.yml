@@ -1,7 +1,8 @@
 name: Dependabot auto-merge
+
 on: 
   pull_request:
-  workflow_dispatch: 
+  workflow_dispatch: # Allow manual triggering
 
 permissions:
   contents: write
@@ -10,7 +11,8 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    # Allow execution for Dependabot PRs or manual runs
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' || github.event_name == 'workflow_dispatch' 
     
     steps:
       - name: Dependabot metadata
@@ -20,6 +22,7 @@ jobs:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       
       - name: Enable auto-merge for Dependabot PRs
+        # Run if the update type is a semver patch update
         if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
