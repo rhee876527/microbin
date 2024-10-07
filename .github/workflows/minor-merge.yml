@@ -11,8 +11,8 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    # Allow execution for Dependabot PRs or manual runs
-    if: github.event_name == 'pull_request' && github.event.pull_request.user.login == 'dependabot[bot]' || github.event_name == 'workflow_dispatch' 
+    # Run for Dependabot PRs or if manually triggered
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Dependabot metadata
@@ -21,9 +21,19 @@ jobs:
         with:
           github-token: "${{ secrets.GITHUB_TOKEN }}"
       
+      - name: Check for Dependabot PR
+        id: check-dependabot
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "Is it a Dependabot PR? ${GITHUB_EVENT_PULL_REQUEST_USER_LOGIN:-not set}"
+            echo "::set-output name=is_dependabot::${{ github.event.pull_request.user.login == 'dependabot[bot]' }}"
+          else
+            echo "::set-output name=is_dependabot::false"
+          fi
+
       - name: Enable auto-merge for Dependabot PRs
-        # Run if the update type is a semver patch update
-        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        # Run if it's a Dependabot PR and the update type is a semver patch update
+        if: steps.check-dependabot.outputs.is_dependabot == 'true' && steps.metadata.outputs.update-type == 'version-update:semver-patch'
         run: gh pr merge --auto --merge "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
