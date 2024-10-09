@@ -1,0 +1,62 @@
+name: Suggest Fixes
+
+on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Build
+      run: cargo build --verbose
+
+    - name: Run Clippy
+      id: clippy
+      run: cargo clippy --fix --allow-dirty -- -D warnings
+
+    - name: Run Cargo Fix
+      id: cargo-fix
+      run: cargo fix --allow-dirty
+
+    - name: Run Rustfix
+      id: rustfix
+      run: rustfix --edition-idioms
+
+    - name: Create a new branch for changes
+      id: create_branch
+      run: |
+        NEW_BRANCH="auto-fix-$(date +%Y%m%d%H%M%S)"
+        git checkout -b $NEW_BRANCH
+        echo "New branch created: $NEW_BRANCH"
+        echo "::set-output name=branch::$NEW_BRANCH"  # Set output for next steps
+
+    - name: Commit changes if any fixes were applied
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "GitHub Actions"
+        if [ -n "$(git status --porcelain)" ]; then
+          git commit -am "Apply automated code fixes"
+          git push origin ${{ steps.create_branch.outputs.branch }}
+        fi
+
+    - name: Create Pull Request
+      if: steps.clippy.outcome == 'success' || steps.cargo-fix.outcome == 'success' || steps.rustfix.outcome == 'success'
+      run: |
+        gh pr create --title "Automated Code Fixes" \
+                      --body "This PR contains automated fixes for code issues identified by Clippy, cargo fix, and rustfix." \
+                      --base main \
+                      --head ${{ steps.create_branch.outputs.branch }}
+                      
