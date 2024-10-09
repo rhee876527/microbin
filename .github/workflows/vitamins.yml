@@ -31,9 +31,9 @@ jobs:
       id: cargo-fix
       run: cargo fix --allow-dirty
 
-    - name: Run Rustfix
-      id: rustfix
-      run: rustfix --edition-idioms
+#    - name: Run Rustfix
+#      id: rustfix
+#      run: rustfix --edition-idioms
 
     - name: Create a new branch for changes
       id: create_branch
