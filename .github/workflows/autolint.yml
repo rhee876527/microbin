@@ -19,7 +19,7 @@ jobs:
         components: clippy
          
     - name: Run cargo clippy with fix
-      run: cargo clippy --fix --allow-dirty --all-targets
+      run: cargo clippy --fix --allow-dirty --all-targets --broken-code
 
     - name: Commit changes
       run: |
