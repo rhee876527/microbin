@@ -1,0 +1,41 @@
+name: Clippy Fix
+
+on:
+#  push:
+#    branches:
+#      - main
+  workflow_dispatch:
+
+jobs:
+  clippy-fix:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run cargo clippy with fix
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        components: clippy
+        run: cargo clippy --fix --allow-dirty
+
+    #- name: Set up Rust
+    #- name: Run cargo clippy with fix
+    #  run: cargo clippy --fix --allow-dirty
+
+    - name: Commit changes
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'actions@github.com'
+        git add .
+        git commit -m "Apply Clippy suggestions" || echo "No changes to commit."
+
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v7
+      with:
+        commit-message: Apply Clippy suggestions
+        branch: clippy-fixes
+        title: "Clippy Fixes"
+        body: "This PR contains changes from running cargo clippy --fix"
+        labels: clippy, review
+        
