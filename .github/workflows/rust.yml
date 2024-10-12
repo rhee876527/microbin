@@ -4,7 +4,7 @@ on:
 #  push:
 #    branches: [ master ]
   pull_request:
-    branches: [ master ]
+#    branches: [ master, clippy-fixes ]
   workflow_dispatch:
 
 env:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
     - name: Run tests
