@@ -44,6 +44,19 @@ jobs:
         body: "This PR contains changes from running cargo clippy --fix"
         labels: clippy, review
 
+  alls-green:
+    if: always()
+    needs:
+      - clippy-fix
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          # allowed-failures: docs, linters
+          # allowed-skips: non-voting-flaky-job
+          jobs: ${{ toJSON(needs) }}
+
 #    - name: Upload Clippy Logs
 #      uses: actions/upload-artifact@v4
 #      with:
