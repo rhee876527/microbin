@@ -125,7 +125,7 @@ pub fn select_all_from_db() -> Result<Vec<Pasta>, Error> {
                 content: row.get(1)?,
                 file: if let (Some(file_name), Some(file_size)) = (row.get(2)?, row.get(3)?) {
                     let file_size: u64 = file_size;
-                    if file_name != "" && file_size != 0 {
+                    if !file_name.is_empty() && file_size != 0 {
                         Some(PastaFile {
                             name: file_name,
                             size: ByteSize::b(file_size),
