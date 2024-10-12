@@ -22,10 +22,10 @@ jobs:
       run: cargo clippy --fix --allow-dirty --all-targets --broken-code
       continue-on-error: true
 
-    - name: Capture warnings and errors
-      run: |
-        echo "Warnings and Errors:"
-        cargo clippy -- --message-format=short
+#    - name: Capture warnings and errors
+#      run: |
+#        echo "Warnings and Errors:"
+#        cargo clippy -- --message-format=short
 #        cargo clippy -- --message-format=short | tee clippy-warnings.txt
 
     - name: Commit changes
