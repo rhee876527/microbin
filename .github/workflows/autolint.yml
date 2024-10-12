@@ -25,7 +25,8 @@ jobs:
     - name: Capture warnings and errors
       run: |
         echo "Warnings and Errors:"
-        cargo clippy -- --message-format=short | tee clippy-warnings.txt
+        cargo clippy -- --message-format=short
+#        cargo clippy -- --message-format=short | tee clippy-warnings.txt
 
     - name: Commit changes
       run: |
@@ -43,9 +44,9 @@ jobs:
         body: "This PR contains changes from running cargo clippy --fix"
         labels: clippy, review
 
-    - name: Upload Clippy Logs
-      uses: actions/upload-artifact@v4
-      with:
-        name: clippy-warnings
-        path: clippy-warnings.txt
+#    - name: Upload Clippy Logs
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: clippy-warnings
+#        path: clippy-warnings.txt
         
