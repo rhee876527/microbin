@@ -266,12 +266,10 @@ pub async fn create(
         }
     }
 
-    if ARGS.readonly && ARGS.uploader_password.is_some() {
-        if uploader_password != ARGS.uploader_password.as_ref().unwrap().to_owned() {
-            return Ok(HttpResponse::Found()
-                .append_header(("Location", format!("{}/incorrect", ARGS.public_path_as_str())))
-                .finish());
-        }
+    if ARGS.readonly && ARGS.uploader_password.is_some() && uploader_password != *ARGS.uploader_password.as_ref().unwrap() {
+        return Ok(HttpResponse::Found()
+            .append_header(("Location", format!("{}/incorrect", ARGS.public_path_as_str())))
+            .finish());
     }
 
     let id = new_pasta.id;
