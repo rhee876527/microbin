@@ -55,7 +55,7 @@ pub struct DbError {
 impl fmt::Display for DbError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         match self.sql_error.as_ref() {
-            None => write!(f, "{}", "Unknown database error occoured"),
+            None => write!(f, "Unknown database error occoured"),
             Some(e) => write!(f, "SQL database error => {}", e)
         }
     }
