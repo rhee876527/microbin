@@ -1,0 +1,31 @@
+name: Dependabot auto-merge
+
+on: 
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot:
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'pull_request' 
+    
+    steps:
+      - name: Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v2
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+      
+      - name: Check and auto-merge Dependabot PR
+        run: |
+          if [ "${{ steps.metadata.outputs.dependabot }}" == "true" ] && [ "${{ steps.metadata.outputs.update-type }}" == "version-update:semver-patch" ]; then
+            gh pr review --approve "$PR_URL"
+            gh pr merge --auto --squash "$PR_URL"
+          fi
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
