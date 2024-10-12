@@ -47,10 +47,7 @@ fn load_from_file() -> io::Result<Vec<Pasta>> {
     match file {
         Ok(_) => {
             let reader = BufReader::new(file.unwrap());
-            let data: Vec<Pasta> = match serde_json::from_reader(reader) {
-                Ok(t) => t,
-                _ => Vec::new(),
-            };
+            let data: Vec<Pasta> = serde_json::from_reader(reader).unwrap_or_default();
             Ok(data)
         }
         Err(_) => {

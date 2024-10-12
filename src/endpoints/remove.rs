@@ -4,15 +4,11 @@ use futures::TryStreamExt;
 
 use crate::args::ARGS;
 use crate::endpoints::errors::ErrorTemplate;
-use crate::pasta::PastaFile;
 use crate::util::animalnumbers::to_u64;
-use crate::util::db::delete;
 use crate::util::hashids::to_u64 as hashid_to_u64;
-use crate::util::misc::{decrypt, remove_expired};
+use crate::util::misc::remove_expired;
 use crate::AppState;
 use askama::Template;
-use std::fs;
-use actix_web::error::ErrorInternalServerError;
 
 #[get("/remove/{id}")]
 pub async fn remove(data: web::Data<AppState>, id: web::Path<String>) -> Result<HttpResponse, Error> {
