@@ -229,16 +229,16 @@ dependencies = [
 
 [[package]]
 name = "actix-web-httpauth"
-version = "0.6.0"
+version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "08c25a48b4684f90520183cd1a688e5f4f7e9905835fa75d02c0fe4f60fcdbe6"
+checksum = "456348ed9dcd72a13a1f4a660449fafdecee9ac8205552e286809eb5b0b29bd3"
 dependencies = [
- "actix-service",
  "actix-utils",
  "actix-web",
- "base64 0.13.1",
+ "base64 0.22.1",
  "futures-core",
  "futures-util",
+ "log",
  "pin-project-lite",
 ]
 
