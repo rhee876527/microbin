@@ -3,6 +3,8 @@ name: docker-publish
 on:
 #  push:
   workflow_dispatch:
+  schedule:
+    - cron: '37 2 6 * *' #build monthly
   
 jobs:
   login:
