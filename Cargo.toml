@@ -36,7 +36,7 @@ rust-embed = "8.5.0"
 mime_guess = "2.0.5"
 harsh = "0.2"
 html-escape = "0.2.13"
-magic-crypt = "3.1.13"
+magic-crypt = "4.0.1"
 rusqlite = { version = "0.32.1", features = ["bundled"] }
 reqwest = { version = "0.11", features = ["json", "blocking"] }
 
