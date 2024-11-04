@@ -38,7 +38,7 @@ harsh = "0.2"
 html-escape = "0.2.13"
 magic-crypt = "4.0.1"
 rusqlite = { version = "0.32.1", features = ["bundled"] }
-reqwest = { version = "0.11", features = ["json", "blocking"] }
+reqwest = { version = "0.12", features = ["json", "blocking"] }
 
 [dependencies.openssl]
 version = "0.10.68"
