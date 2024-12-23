@@ -13,3 +13,5 @@ jobs:
         with:
           target: minor
           github-token: "${{ secrets.PAT_TOKEN }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
