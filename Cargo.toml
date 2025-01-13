@@ -22,7 +22,7 @@ askama-filters = { version = "0.1.3", features = ["chrono"] }
 chrono = "0.4.39"
 rand = "0.8.5"
 linkify = "0.10.0"
-clap = { version = "4.5.23", features = ["derive", "env"] }
+clap = { version = "4.5.26", features = ["derive", "env"] }
 actix-multipart = "0.4.0"
 futures = "0.3"
 sanitize-filename = "0.6.0"
